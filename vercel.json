@@ -9,3 +9,14 @@
     {
       "src": "/",
       "dest": "/index.html"
+    },
+    {
+      "src": "/api/chat",
+      "dest": "/apichat.py"
+    },
+    {
+      "src": "/api/health", 
+      "dest": "/apichat.py"
+    }
+  ]
+}
