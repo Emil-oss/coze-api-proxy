@@ -1,0 +1,92 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coze API 代理服务</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+        }
+        code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Coze API 代理服务</h1>
+        <p>这是一个 Coze API 的代理服务，部署在 Vercel 上。</p>
+        
+        <h2>📡 API 端点</h2>
+        <div class="endpoint">
+            <h3>POST /api/chat</h3>
+            <p><strong>功能：</strong>发送消息到 Coze Bot</p>
+            <p><strong>请求格式：</strong></p>
+            <pre><code>{
+  "message": "你的消息内容"
+}</code></pre>
+        </div>
+
+        <div class="endpoint">
+            <h3>GET /api/health</h3>
+            <p><strong>功能：</strong>健康检查</p>
+            <p><strong>返回：</strong>服务状态信息</p>
+        </div>
+
+        <h2>💡 使用示例</h2>
+        <pre><code>curl -X POST https://your-domain.vercel.app/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "你好"}'</code></pre>
+
+        <h2>📊 服务状态</h2>
+        <button onclick="checkHealth()">检查服务状态</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function checkHealth() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '检查中...';
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                statusDiv.innerHTML = `
+                    <div style="color: green; margin-top: 10px;">
+                        ✅ 服务正常<br>
+                        时间: ${data.timestamp || '未知'}
+                    </div>
+                `;
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div style="color: red; margin-top: 10px;">
+                        ❌ 服务异常: ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
