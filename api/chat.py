@@ -3,12 +3,15 @@ import json
 import requests
 import os
 import traceback
+from datetime import datetime
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
-            # 检查路径
-            if self.path == '/api/chat' or self.path == '/chat':
+            print(f"POST request to: {self.path}")  # 添加调试日志
+            
+            # 检查路径 - 添加更多匹配
+            if self.path in ['/api/chat', '/chat'] or self.path.startswith('/api/chat'):
                 # 读取请求数据
                 content_length = int(self.headers.get('Content-Length', 0))
                 if content_length == 0:
@@ -36,7 +39,7 @@ class handler(BaseHTTPRequestHandler):
                 else:
                     self.send_error_response(500, "Failed to get response from Coze API")
             else:
-                self.send_error_response(404, "Endpoint not found")
+                self.send_error_response(404, f"Endpoint not found: {self.path}")
                 
         except Exception as e:
             print(f"Handler error: {str(e)}")
@@ -73,7 +76,7 @@ class handler(BaseHTTPRequestHandler):
                 url, 
                 headers=headers, 
                 json=payload,
-                timeout=30  # 添加超时
+                timeout=30
             )
             
             print(f"Coze API response status: {response.status_code}")
@@ -138,7 +141,9 @@ class handler(BaseHTTPRequestHandler):
     
     def do_GET(self):
         """处理GET请求 - 用于健康检查"""
-        if self.path == '/api/health' or self.path == '/health':
+        print(f"GET request to: {self.path}")  # 添加调试日志
+        
+        if self.path in ['/api/health', '/health'] or self.path.startswith('/api/health'):
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -147,11 +152,11 @@ class handler(BaseHTTPRequestHandler):
             health_data = {
                 "status": "healthy",
                 "service": "Coze API Proxy",
-                "timestamp": requests.utils.datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat()  # 修复了这里
             }
             self.wfile.write(json.dumps(health_data).encode())
         else:
-            self.send_error_response(404, "GET endpoint not found")
+            self.send_error_response(404, f"GET endpoint not found: {self.path}")
 
     def log_message(self, format, *args):
         """自定义日志格式"""
